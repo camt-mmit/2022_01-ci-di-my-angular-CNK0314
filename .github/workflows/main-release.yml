@@ -19,7 +19,7 @@ jobs:
       - run: |
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.actor }}"
-      - name: release main
+      - name: Release main
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_MAIN }}
