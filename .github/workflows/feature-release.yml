@@ -16,15 +16,12 @@ jobs :
       - uses : actions/setup-node@v3
         with : 
           node-version : 16
-          cache : 'yarn'
-      - name : Set env var
-        run : |
+      - run : |
           VERSION="${REF_NAME#refs/heads/b}"
           echo "VERSION=v${VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=b${VERSION}" >> $GITHUB_ENV
           echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
-      - name : config user git
-        run : |
+      - run : |
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.actor }}"
       - run : npm install -g yarn
@@ -32,7 +29,7 @@ jobs :
       - run : yarn build
       - run : yarn lint 
       - run:  yarn test:ci
-      -  run : |
+      - run : |
           git fetch --unshallow
           git checkout main
           git merge ${{ env.BRANCH_NAME }}
