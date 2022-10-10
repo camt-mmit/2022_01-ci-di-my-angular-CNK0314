@@ -17,6 +17,11 @@ jobs:
         with:
           node-version: "16"
       - run: |
+          VERSION="${REF_NAME#refs/head/b}"
+          echo "VERSION = ${VERSION}" >> $GITHUB_ENV
+          echo "BRANCH_NAME=b${VERSION}" >> $GITHUB_ENV
+          echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
+      - run: |
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.actor }}"
       - name: release main
