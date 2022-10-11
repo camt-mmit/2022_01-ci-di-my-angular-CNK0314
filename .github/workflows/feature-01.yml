@@ -17,7 +17,8 @@ jobs:
       - run: |
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.actor }}"
-      - run: npm install -g yarn
+      - name: install
+        run: npm install -g yarn
       - run: yarn install --frozen-lockfile
       - run: npx ng build --configuration=production --base-href="/${{ github.event.repository.name }}/"
       - run: yarn run lint
