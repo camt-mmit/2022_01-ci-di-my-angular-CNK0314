@@ -1,38 +1,37 @@
-name: feature-release  
-run-name: ${{ github.actor }} is deploying gh-pages
-on: 
-  push: 
-    branch: 
+name: feature release
+run-name: ${{ github.actor }} is releasing feature
+on:
+  push:
+    branches:
       - b*.*.*
-jobs :
-  ci-tag:
-    runs-on : ubuntu-latest
-    env : 
-      REF_NAME : ${{ github.ref }}
+jobs:
+  ci-feature:
+    runs-on: ubuntu-latest
+    env:
+      REF_NAME: ${{ github.ref }}
     steps:
-      - uses : actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
-          token : ${{ secrets.PUSH_MAIN }}
-      - uses : actions/setup-node@v3
-        with : 
-          node-version : 16
-      - run : |
+          token: ${{ secrets.PUSH_MAIN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - run: |
           VERSION="${REF_NAME#refs/heads/b}"
-          echo "VERSION=v${VERSION}" >> $GITHUB_ENV
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
           echo "BRANCH_NAME=b${VERSION}" >> $GITHUB_ENV
           echo "TAG_NAME=v${VERSION}" >> $GITHUB_ENV
-      - run : |
+      - run: |
           git config --global user.email "${{ github.event.pusher.email }}"
           git config --global user.name "${{ github.actor }}"
-      - run : npm install -g yarn
-      - run : yarn --frozen-lockfile
-      - run : yarn build
-      - run : yarn lint 
-      - run:  yarn test:ci
-      - run : |
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile 
+      - run: yarn run lint
+      - run: yarn run test:ci
+      - run: |
           git fetch --unshallow
           git checkout main
           git merge ${{ env.BRANCH_NAME }}
-          git push origin main
+          git push --delete origin ${{ env.BRANCH_NAME }}
           git tag -a ${{ env.TAG_NAME }} -m "my version ${{ env.VERSION }}"
           git push origin main --tags
